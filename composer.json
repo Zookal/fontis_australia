@@ -6,7 +6,7 @@
     "homepage": "https://www.fontis.com.au/australia-magento-extension",
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
-        "Zookal/auspost-api-php": "dev-master",
+        "zookal/auspost-api-php": "dev-master",
         "fontis/composer-autoloader": "*"
     }
 }

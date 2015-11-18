@@ -57,7 +57,7 @@ class Fontis_Australia_Model_Observer
         /** @var Mage_Page_Block_Html_Head $head */
         $head = $layout->getBlock('head');
 
-        $skinBaseDir = Mage::getDesign()->getSkinBaseDir(array('_package' => 'base'));
+        $skinBaseDir = Mage::getDesign()->getSkinBaseDir(array('_package' => 'base','_theme' => 'default'));
         $cssPath = 'prototype/windows/themes/magento.css';
 
         if (file_exists($skinBaseDir . DS . 'lib' . DS . $cssPath)) {

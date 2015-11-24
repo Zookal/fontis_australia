@@ -46,11 +46,6 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
             $signatureCost = 0;
         }
 
-        Mage::log($request->getDestCountryId());
-        Mage::log($request->getDestRegionId());
-        Mage::log($postcode);
-        Mage::log(var_export($request->getConditionName(), true));
-
         for ($j = 0; $j < 5; $j++) {
 
             $select = $read->select()->from($table);
@@ -122,7 +117,6 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
             // pdo has an issue. we cannot use bind
 
             $newdata=array();
-            Mage::log($select->__toString());
             $row = $read->fetchAll($select);
             if (!empty($row) && ($j < 5)) {
                 // have found a result or found nothing and at end of list!
@@ -145,11 +139,9 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
                             // add version with insurance
                             // work out how many insurance 'steps' we have
                             $steps = ceil($request->getPackageValue() / $insuranceStep);
-                            Mage::log("Insurance steps: $steps");
                             // add on number of 'steps' multiplied by the
                             // insurance cost per step
                             $insuranceCost = $insuranceCostPerStep * $steps;
-                            Mage::log("Insurance cost: $insuranceCost");
                             $price += $insuranceCost;
 
                             $data['price'] = (string)$price;
@@ -163,7 +155,6 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
                 break;
             }
         }
-        Mage::log(var_export($newdata, true));
         return $newdata;
     }
 
@@ -336,7 +327,6 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
                     );
                     $connection->delete($table, $condition);
 
-                    Mage::log(count($data)." lines read from CSV");
                     foreach($data as $k=>$dataLine) {
                         try {
                             // convert comma-seperated postcode/postcode range
@@ -345,7 +335,6 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
                             foreach(explode(',', $dataLine['dest_zip']) as $postcodeEntry) {
                                 $postcodeEntry = explode("-", trim($postcodeEntry));
                                 if(count($postcodeEntry) == 1) {
-                                    Mage::log("Line $k, single postcode: ".$postcodeEntry[0]);
                                     // if the postcode entry is length 1, it's
                                     // just a single postcode
                                     $postcodes[] = $postcodeEntry[0];
@@ -354,13 +343,11 @@ class Fontis_Australia_Model_Mysql4_Shipping_Carrier_Eparcel extends Mage_Core_M
                                     // to a sequence of numbers
                                     $pcode1 = (int)$postcodeEntry[0];
                                     $pcode2 = (int)$postcodeEntry[1];
-                                    Mage::log("Line $k, postcode range: $pcode1-$pcode2");
 
                                     $postcodes = array_merge($postcodes, range(min($pcode1, $pcode2), max($pcode1, $pcode2)));
                                 }
                             }
 
-                            Mage::log(var_export($postcodes, true));
                             foreach($postcodes as $postcode) {
                                 $dataLine['dest_zip'] = str_pad($postcode, 4, "0", STR_PAD_LEFT);
                                 $connection->insert($table, $dataLine);
